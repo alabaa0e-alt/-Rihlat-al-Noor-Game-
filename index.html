@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>رحلة النور - معاينة - عمار العبدالله</title>
+<style>body{margin:0;background:#0A2E38;color:#fff;font-family:Tajawal,sans-serif;height:100vh;overflow:hidden}
+#load{position:fixed;inset:0;z-index:999;background:#0A2E38;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.track{width:280px;height:22px;background:rgba(255,255,255,0.1);border-radius:11px;overflow:hidden;margin-top:16px;border:1px solid rgba(255,255,255,0.2)}
+.fill{height:100%;width:0%;background:linear-gradient(90deg,#7ED8D1,#2BB7C4);transition:0.3s}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;background:radial-gradient(140% 100% at 50% 0%, #123F4E, #0A2E38)}
+.screen.active{display:flex}.main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.ar7{position:absolute;top:10px;right:10px;width:40px;height:40px;background:radial-gradient(circle at 30% 30%, #FFF8DC, #C9A24B);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#3D2E10;cursor:pointer}
+.btn{width:260px;padding:12px;border-radius:12px;border:none;font-weight:700;margin:6px;cursor:pointer}
+.primary{background:#2BB7C4;color:white}.secondary{background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3)}
+.board{flex:1;background:linear-gradient(180deg,#E8F7FA,#FFF8E1);border-radius:14px;padding:8px;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(5,1fr);gap:5px;margin:10px}
+.cell{background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#0A2E38;position:relative}
+.pawn{width:12px;height:12px;border-radius:50%;position:absolute;bottom:2px;right:2px;border:2px solid white}
+.bar{display:flex;gap:6px;overflow:auto;padding:6px}.pcard{min-width:90px;background:white;color:#0A2E38;border-radius:8px;padding:6px;font-size:10px;border:2px solid transparent}.pcard.active{border-color:#C9A24B}
+.modal{position:fixed;inset:0;background:rgba(6,30,38,0.85);display:none;align-items:center;justify-content:center;z-index:500;padding:12px}.modal.show{display:flex}
+.qbox{background:white;color:#0A2E38;border-radius:14px;max-width:420px;width:100%;padding:12px}
+.qopt button{width:100%;padding:8px;margin:4px 0;border-radius:8px;border:1px solid #ccc;background:#F4F9FA;text-align:right}
+.qopt button.correct{background:#2E7D32!important;color:white}.qopt button.wrong{background:#EF5350!important;color:white}
+</style></head><body>
+<div id="load"><div style="font-size:36px;font-weight:900">رحلة النور</div><div style="font-size:10px;color:#7ED8D1;letter-spacing:3px">RIHLA AL NOOR</div><div class="track"><div class="fill" id="fill"></div></div><div id="ltxt" style="margin-top:8px;font-size:11px;color:#7ED8D1">نجهز لك رحلة النور...</div></div>
+<div id="main" class="screen"><div class="main"><div class="ar7" onclick="alert('تصميم وتطوير: عمار العبدالله')">AR7</div>
+<div style="font-size:64px">👳‍♂️🌴</div><div style="font-size:28px;font-weight:900">رحلة النور</div><div style="font-size:11px;color:#7ED8D1">RIHLA AL NOOR - تصميم: عمار العبدالله</div>
+<button class="btn primary" onclick="goSetup()">ابدأ اللعبة - معاينة مباشرة</button>
+<button class="btn secondary" onclick="alert('الإعدادات: مؤثرات بدون موسيقى - اهتزاز - صلاة')">الإعدادات</button>
+</div></div>
+<div id="setup" class="screen"><div class="main"><div style="background:white;color:#0A2E38;border-radius:14px;padding:14px;max-width:380px;width:92vw">
+<h3 style="margin:0">إعداد المباراة</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0">
+<div onclick="sel(2)" id="c2" style="padding:10px;border:2px solid #ddd;border-radius:8px;text-align:center;cursor:pointer">👥<br>لاعبان</div>
+<div onclick="sel(3)" id="c3" style="padding:10px;border:2px solid #2BB7C4;background:#E0F7FA;border-radius:8px;text-align:center;cursor:pointer">👥👤<br>3 لاعبين</div>
+<div onclick="sel(4)" id="c4" style="padding:10px;border:2px solid #ddd;border-radius:8px;text-align:center;cursor:pointer">👥👥<br>4 لاعبين</div>
+</div><div id="names" style="display:grid;gap:6px"></div>
+<div style="display:flex;gap:6px;margin-top:10px"><button class="btn secondary" style="flex:1" onclick="goMain()">رجوع</button><button class="btn primary" style="flex:1" onclick="startG()">ابدأ</button></div>
+</div></div></div>
+<div id="game" class="screen"><div style="display:flex;flex-direction:column;height:100vh;max-width:900px;margin:0 auto;width:100%;padding:8px">
+<div class="bar" id="pbar"></div><div class="board" id="board"></div>
+<div style="background:white;border-radius:10px;padding:8px;display:flex;justify-content:space-between;color:#0A2E38;margin-top:8px">
+<div style="display:flex;gap:8px;align-items:center"><div id="dice" onclick="roll()" style="width:48px;height:48px;background:#E0F7FA;border:2px solid #0E8FA0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer">🎲</div><div><div id="turn" style="font-size:11px;font-weight:700">دور: علي</div><div id="dres" style="font-size:10px">ارم النرد</div></div></div><button onclick="goMain()" style="padding:6px 10px;border-radius:8px;border:1px solid #ccc;background:white">خروج</button></div>
+</div></div>
+<div id="qmodal" class="modal"><div class="qbox"><div id="qcat" style="font-size:9px;background:#2BB7C4;color:white;padding:2px 8px;border-radius:20px;display:inline-block">التراث</div><div id="qtxt" style="font-size:13px;font-weight:700;margin:8px 0">سؤال</div><div id="qopts" class="qopt"></div><div id="qhint" style="font-size:10px;background:#E0F7FA;padding:6px;border-radius:6px;margin-top:6px;display:none"></div><button id="nextb" onclick="closeQ()" style="display:none;width:100%;margin-top:8px;padding:8px;background:#C9A24B;color:white;border:none;border-radius:8px">التالي</button></div></div>
+<div id="winmodal" class="modal"><div class="qbox" style="text-align:center"><div style="font-size:32px">🏆</div><div id="wtxt" style="font-weight:900">الفائز</div><div id="wdet" style="font-size:11px;color:#666"></div><button onclick="goMain()" style="width:100%;margin-top:10px;padding:10px;background:#2BB7C4;color:white;border:none;border-radius:8px">الرئيسية</button></div></div>
+<script>
+const QUESTIONS=[{"id":1,"cat":"التراث الأحسائي","q":"ما الذي تشتهر به واحة الأحساء؟","opts":["النخيل والتمور","التفاح","الموز","العنب"],"a":0,"hint":"أكبر واحة نخيل","src":"تراث"},{"id":2,"cat":"تاريخ الأحساء","q":"ما اسم جبل الأحساء الشهير؟","opts":["جبل القارة","جبل أحد","جبل النور","جبل طويق"],"a":0,"hint":"كهوف باردة","src":"معالم"},{"id":3,"cat":"الثقافة الإسلامية","q":"كم عدد أركان الإسلام؟","opts":["5","6","4","3"],"a":0,"hint":"5","src":"حديث جبريل"},{"id":4,"cat":"السيرة وأهل البيت","q":"كم عمر الحسين يوم كربلاء؟","opts":["57 سنة","30 سنة","40 سنة","20 سنة"],"a":0,"hint":"57","src":"الإرشاد"}];
+let st={players:[],pos:[],scores:[],cur:0,used:new Set(),locked:false,curQ:null};
+function hideAll(){document.querySelectorAll('.screen').forEach(s=>s.style.display='none');}
+function goMain(){hideAll();document.getElementById('main').style.display='flex';}
+function goSetup(){hideAll();document.getElementById('setup').style.display='flex';sel(3);}
+let selN=3;function sel(n){selN=n;document.getElementById('c2').style.borderColor='#ddd';document.getElementById('c2').style.background='white';document.getElementById('c3').style.borderColor='#ddd';document.getElementById('c3').style.background='white';document.getElementById('c4').style.borderColor='#ddd';document.getElementById('c4').style.background='white';document.getElementById('c'+n).style.borderColor='#2BB7C4';document.getElementById('c'+n).style.background='#E0F7FA';let c=document.getElementById('names');c.innerHTML='';let defs=['علي','فاطمة','عبد الله','زينب'];for(let i=0;i<n;i++){c.innerHTML+='<input id="n'+i+'" value="'+defs[i]+'" style="padding:8px;border-radius:8px;border:1px solid #ccc">';}}
+function startG(){let names=[];for(let i=0;i<selN;i++){let el=document.getElementById('n'+i);names.push(el&&el.value?el.value:['علي','فاطمة','عبد الله','زينب'][i]);}st.players=names;st.pos=new Array(names.length).fill(0);st.scores=new Array(names.length).fill(0);st.cur=0;st.used.clear();hideAll();document.getElementById('game').style.display='flex';buildBoard();buildBar();}
+function buildBoard(){let b=document.getElementById('board');b.innerHTML='';for(let i=0;i<40;i++){let cell=document.createElement('div');cell.className='cell';cell.id='cell-'+i;cell.innerHTML='<span>'+(i==0?'البداية':i==39?'النور':i+1)+'</span>';b.appendChild(cell);}placePawns();}
+function buildBar(){let bar=document.getElementById('pbar');bar.innerHTML='';st.players.forEach((n,i)=>{bar.innerHTML+='<div class="pcard '+(i==st.cur?'active':'')+'"><div style="width:20px;height:20px;border-radius:50%;background:#2BB7C4;color:white;display:flex;align-items:center;justify-content:center;font-size:10px">'+(i+1)+'</div><div style="font-size:9px"><b>'+n+'</b><br>نقاط:'+st.scores[i]+'</div></div>';});document.getElementById('turn').innerText='دور: '+st.players[st.cur];}
+function placePawns(){document.querySelectorAll('.pawn').forEach(p=>p.remove());let cols=['#0E8FA0','#FF8F00','#8E24AA','#2E7D32'];st.pos.forEach((p,i)=>{let cell=document.getElementById('cell-'+p);if(cell){let d=document.createElement('div');d.className='pawn';d.style.background=cols[i%4];d.style.right=(4+i*16)+'%';cell.appendChild(d);}});}
+function roll(){if(st.locked) return;st.locked=true;let dice=document.getElementById('dice');let res=Math.floor(Math.random()*6)+1;let c=0;let iv=setInterval(()=>{dice.innerText=Math.floor(Math.random()*6)+1;c++;if(c>10){clearInterval(iv);dice.innerText=res;document.getElementById('dres').innerText='النتيجة: '+res;move(res);}},80);}
+function move(s){st.pos[st.cur]=Math.min(39,st.pos[st.cur]+s);placePawns();buildBar();setTimeout(()=>{if(st.pos[st.cur]>=39){win();}else{ask(st.pos[st.cur]);}},300);}
+function ask(cell){let pool=QUESTIONS.filter(q=>!st.used.has(q.id));if(pool.length==0){st.used.clear();pool=QUESTIONS;}let q=pool[Math.floor(Math.random()*pool.length)];st.used.add(q.id);st.curQ=q;document.getElementById('qcat').innerText=q.cat;document.getElementById('qtxt').innerText=q.q;document.getElementById('qhint').innerText='تلميح: '+q.hint+' | المصدر: '+q.src;document.getElementById('qhint').style.display='none';let opts=document.getElementById('qopts');opts.innerHTML='';q.opts.forEach((o,i)=>{opts.innerHTML+='<button onclick="choose('+i+')" id="o'+i+'">'+o+'</button>';});document.getElementById('nextb').style.display='none';document.getElementById('qmodal').classList.add('show');}
+function choose(i){let q=st.curQ;document.querySelectorAll('#qopts button').forEach((b,idx)=>{if(idx==q.a)b.classList.add('correct');else if(idx==i)b.classList.add('wrong');b.disabled=true;});if(i==q.a){st.scores[st.cur]+=10;}document.getElementById('qhint').style.display='block';document.getElementById('nextb').style.display='block';buildBar();}
+function closeQ(){document.getElementById('qmodal').classList.remove('show');st.cur=(st.cur+1)%st.players.length;st.locked=false;buildBar();}
+function win(){let m=Math.max(...st.scores);let wi=st.scores.indexOf(m);document.getElementById('wtxt').innerText='الفائز: '+st.players[wi]+' 🏆';document.getElementById('wdet').innerText='النقاط: '+m+' - اللهم صل على محمد وآل محمد - تصميم: عمار العبدالله';document.getElementById('winmodal').classList.add('show');}
+let prog=0;let iv2=setInterval(()=>{prog+=14;if(prog>100)prog=100;document.getElementById('fill').style.width=prog+'%';if(prog>=100){clearInterval(iv2);setTimeout(()=>{document.getElementById('load').style.display='none';document.getElementById('main').style.display='flex';},400);}},200);
+</script></body></html>
